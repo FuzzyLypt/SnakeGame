@@ -1,21 +1,21 @@
 # Imports
-import queue
 import random
 import sys
-import threading
 import time
 import keyboard
 
+import food_obj
 import snake_obj
 
 # Configuration Variables
 grid_size = (30, 10)
 time_limit = 24000
-frame_time = 0.3
+frame_time = 0.1
 snake_extra_length = 2
 
 # Logic Variables
 snake = snake_obj.SnakeObj(snake_extra_length, (random.randint(0, grid_size[0] - 1), random.randint(0, grid_size[1] - 1)))
+food = food_obj.FoodObj()
 direction = (1, 0)
 pending_direction = direction
 last_key = None
@@ -40,7 +40,7 @@ def player_input(event):
 
 # Game Start Logic
 free_list = [(x, y) for y in range(grid_size[1]) for x in range(grid_size[0]) if (x, y) not in snake.coordinates]
-food = free_list[random.randrange(len(free_list))]
+food.pos = free_list[random.randrange(len(free_list))]
 
 # Main Logic Updating Loop
 for step in range(time_limit):
@@ -61,9 +61,9 @@ for step in range(time_limit):
         elif new_head[1] >= grid_size[1]:
             new_head = (snake.head[0], 0)
     grew = False
-    if new_head == food:
+    if new_head == food.pos:
         free_list = [(x, y) for y in range(grid_size[1]) for x in range(grid_size[0]) if (x, y) not in snake.coordinates]
-        food = free_list[random.randrange(len(free_list))]
+        food.pos = free_list[random.randrange(len(free_list))]
         grew = True
     snake.move(new_head, grew)
     if snake.head in snake.coordinates[1:]:
@@ -72,11 +72,11 @@ for step in range(time_limit):
 
     # Rendering
     grid = [['.'] * grid_size[0] for _ in range(grid_size[1])]
-    grid[food[1]][food[0]] = 'o'
+    grid[food.pos[1]][food.pos[0]] = 'o'
     for i in range(len(snake.coordinates)):
         grid[snake.coordinates[i][1]][snake.coordinates[i][0]] = '#'
     row_strings = [''.join(row) for row in grid]
-    print(f"{'\n' * 2}Snake head pos: {snake.head}\nFood pos: {food}\nScore: {len(snake.coordinates)}\nStep {step + 1} out of {time_limit}:\n{'\n'.join(row_strings)}")
+    print(f"{'\n' * 2}Snake head pos: {snake.head}\nFood pos: {food.pos}\nScore: {len(snake.coordinates)}\nStep {step + 1} out of {time_limit}:\n{'\n'.join(row_strings)}")
 
     # Frame Update
     time.sleep(frame_time)
