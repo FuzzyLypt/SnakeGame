@@ -4,21 +4,20 @@ import sys
 import time
 import keyboard
 
-import food_obj
-import snake_obj
+from food_obj import FoodObj
+from snake_obj import SnakeObj
 
 # Configuration Variables
 grid_size = (30, 10)
-time_limit = 24000
+time_limit = 15
 frame_time = 0.1
 snake_extra_length = 2
 
 # Logic Variables
-snake = snake_obj.SnakeObj(snake_extra_length, (random.randint(0, grid_size[0] - 1), random.randint(0, grid_size[1] - 1)))
-food = food_obj.FoodObj()
+snake = SnakeObj(snake_extra_length, (random.randint(0, grid_size[0] - 1), random.randint(0, grid_size[1] - 1)))
+food = FoodObj()
 direction = (1, 0)
 pending_direction = direction
-last_key = None
 
 # Input Threading Logic
 def player_input(event):
@@ -37,18 +36,17 @@ def player_input(event):
         if new_direction[0] + direction[0] != 0 or new_direction[1] + direction[1] != 0:
             pending_direction = new_direction
 
-
 # Game Start Logic
 free_list = [(x, y) for y in range(grid_size[1]) for x in range(grid_size[0]) if (x, y) not in snake.coordinates]
 food.pos = free_list[random.randrange(len(free_list))]
+keyboard.on_press(player_input)
 
 # Main Logic Updating Loop
 for step in range(time_limit):
     # Input Logic
-    keyboard.on_press(player_input)
     direction = pending_direction
 
-    # Dynamic Positioning Logic
+    # Dynamic Positioning and Food Logic
     new_head = (snake.head[0] + direction[0], snake.head[1] + direction[1])
     if direction[0] != 0:
         if 0 > new_head[0]:
@@ -60,12 +58,12 @@ for step in range(time_limit):
             new_head = (snake.head[0], grid_size[1] - 1)
         elif new_head[1] >= grid_size[1]:
             new_head = (snake.head[0], 0)
-    grew = False
     if new_head == food.pos:
+        snake.move(new_head, True)
         free_list = [(x, y) for y in range(grid_size[1]) for x in range(grid_size[0]) if (x, y) not in snake.coordinates]
         food.pos = free_list[random.randrange(len(free_list))]
-        grew = True
-    snake.move(new_head, grew)
+    else:
+        snake.move(new_head, False)
     if snake.head in snake.coordinates[1:]:
         print("Game ended by player action")
         sys.exit(0)
@@ -76,7 +74,9 @@ for step in range(time_limit):
     for i in range(len(snake.coordinates)):
         grid[snake.coordinates[i][1]][snake.coordinates[i][0]] = '#'
     row_strings = [''.join(row) for row in grid]
-    print(f"{'\n' * 2}Snake head pos: {snake.head}\nFood pos: {food.pos}\nScore: {len(snake.coordinates)}\nStep {step + 1} out of {time_limit}:\n{'\n'.join(row_strings)}")
+    frame_str = '\n'.join(row_strings)
+    blank = '\n' * 2
+    print(f"{blank}Snake head pos: {snake.head}\nFood pos: {food.pos}\nScore: {len(snake.coordinates)}\nStep {step + 1} out of {time_limit}:\n{frame_str}")
 
     # Frame Update
     time.sleep(frame_time)

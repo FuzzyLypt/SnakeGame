@@ -1,8 +1,8 @@
 class SnakeObj:
     def __init__(self, extra_length, head_coordinate):
         self.coordinates = [head_coordinate]
-        for _ in range(extra_length):
-            new_head = (head_coordinate[0] + 1, head_coordinate[1])
+        for i in range(extra_length):
+            new_head = (head_coordinate[0] - extra_length + 1 + i, head_coordinate[1])
             self.move(new_head, True)
 
     @property
