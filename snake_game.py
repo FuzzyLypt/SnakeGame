@@ -9,7 +9,7 @@ from snake_obj import SnakeObj
 
 # Configuration Variables
 grid_size = (30, 10)
-time_limit = 15
+time_limit = 24000
 frame_time = 0.1
 snake_extra_length = 2
 
@@ -47,17 +47,7 @@ for step in range(time_limit):
     direction = pending_direction
 
     # Dynamic Positioning and Food Logic
-    new_head = (snake.head[0] + direction[0], snake.head[1] + direction[1])
-    if direction[0] != 0:
-        if 0 > new_head[0]:
-            new_head = (grid_size[0] - 1, snake.head[1])
-        elif new_head[0] >= grid_size[0]:
-            new_head = (0, snake.head[1])
-    else:
-        if 0 > new_head[1]:
-            new_head = (snake.head[0], grid_size[1] - 1)
-        elif new_head[1] >= grid_size[1]:
-            new_head = (snake.head[0], 0)
+    new_head = ((snake.head[0] + direction[0]) % grid_size[0], (snake.head[1] + direction[1]) % grid_size[1])
     if new_head == food.pos:
         snake.move(new_head, True)
         free_list = [(x, y) for y in range(grid_size[1]) for x in range(grid_size[0]) if (x, y) not in snake.coordinates]
