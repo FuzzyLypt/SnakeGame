@@ -11,10 +11,10 @@ from snake_obj import SnakeObj
 grid_size = (30, 10)
 time_limit = 24000
 frame_time = 0.1
-snake_extra_length = 2
+starting_length = 7
 
 # Logic Variables
-snake = SnakeObj(snake_extra_length, (random.randint(0, grid_size[0] - 1), random.randint(0, grid_size[1] - 1)))
+snake = SnakeObj(starting_length, (random.randint(0, grid_size[0] - 1), random.randint(0, grid_size[1] - 1)))
 food = FoodObj()
 direction = (1, 0)
 pending_direction = direction
