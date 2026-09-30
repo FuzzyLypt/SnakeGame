@@ -4,22 +4,24 @@ import sys
 import time
 import keyboard
 
+from gridwrap_map import GridWrapMap
 from food_obj import FoodObj
 from snake_obj import SnakeObj
 
 # Configuration Variables
-grid_size = (30, 10)
+initial_grid_size = (30, 10)
 time_limit = 24000
 frame_time = 0.1
 starting_length = 7
 
 # Logic Variables
-snake = SnakeObj(starting_length, (random.randint(0, grid_size[0] - 1), random.randint(0, grid_size[1] - 1)))
+grid = GridWrapMap(initial_grid_size)
+snake = SnakeObj(starting_length, (random.randint(starting_length - 1, grid.grid_size[0] - 1), random.randint(0, grid.grid_size[1] - 1)))
 food = FoodObj()
 direction = (1, 0)
 pending_direction = direction
 
-# Input Threading Logic
+# Input Logic
 def player_input(event):
     global pending_direction
 
@@ -37,8 +39,7 @@ def player_input(event):
             pending_direction = new_direction
 
 # Game Start Logic
-free_list = [(x, y) for y in range(grid_size[1]) for x in range(grid_size[0]) if (x, y) not in snake.coordinates]
-food.pos = free_list[random.randrange(len(free_list))]
+food.pos = grid.food_spawn(snake.coordinates)
 keyboard.on_press(player_input)
 
 # Main Logic Updating Loop
@@ -47,26 +48,23 @@ for step in range(time_limit):
     direction = pending_direction
 
     # Dynamic Positioning and Food Logic
-    new_head = ((snake.head[0] + direction[0]) % grid_size[0], (snake.head[1] + direction[1]) % grid_size[1])
+    new_head = grid.move_wrap(snake.head, direction)
     if new_head == food.pos:
         snake.move(new_head, True)
-        free_list = [(x, y) for y in range(grid_size[1]) for x in range(grid_size[0]) if (x, y) not in snake.coordinates]
-        food.pos = free_list[random.randrange(len(free_list))]
+        food.pos = grid.food_spawn(snake.coordinates)
+        if food.pos is None:
+            print("You've won the snake game!")
+            sys.exit(0)
     else:
         snake.move(new_head, False)
-    if snake.head in snake.coordinates[1:]:
+    if snake.collided_with_self():
         print("Game ended by player action")
         sys.exit(0)
 
     # Rendering
-    grid = [['.'] * grid_size[0] for _ in range(grid_size[1])]
-    grid[food.pos[1]][food.pos[0]] = 'o'
-    for i in range(len(snake.coordinates)):
-        grid[snake.coordinates[i][1]][snake.coordinates[i][0]] = '#'
-    row_strings = [''.join(row) for row in grid]
-    frame_str = '\n'.join(row_strings)
+    frame_str = grid.render_grid(snake.coordinates, food.pos)
     blank = '\n' * 2
-    print(f"{blank}Snake head pos: {snake.head}\nFood pos: {food.pos}\nScore: {len(snake.coordinates)}\nStep {step + 1} out of {time_limit}:\n{frame_str}")
+    print(f"{blank}Snake head pos: {snake.head}\nFood pos: {food.pos}\nScore: {len(snake.coordinates) - starting_length}\nStep {step + 1} out of {time_limit}:\n{frame_str}")
 
     # Frame Update
     time.sleep(frame_time)
