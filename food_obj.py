@@ -1,6 +1,6 @@
 class FoodObj:
     def __init__(self):
-        self.coordinates = (-1,-1)
+        self.coordinates = None
 
     @property
     def pos(self):

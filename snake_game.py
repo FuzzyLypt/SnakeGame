@@ -2,9 +2,9 @@
 import random
 import sys
 import time
-import keyboard
 
 from gridwrap_map import GridWrapMap
+from input_handler import InputHandler
 from food_obj import FoodObj
 from snake_obj import SnakeObj
 
@@ -18,34 +18,16 @@ starting_length = 7
 grid = GridWrapMap(initial_grid_size)
 snake = SnakeObj(starting_length, (random.randint(starting_length - 1, grid.grid_size[0] - 1), random.randint(0, grid.grid_size[1] - 1)))
 food = FoodObj()
-direction = (1, 0)
-pending_direction = direction
-
-# Input Logic
-def player_input(event):
-    global pending_direction
-
-    key_map = {
-        'w': (0, -1),
-        'a': (-1, 0),
-        's': (0, 1),
-        'd': (1, 0)
-    }
-
-    if event.name in key_map:
-        new_direction = key_map[event.name]
-
-        if new_direction[0] + direction[0] != 0 or new_direction[1] + direction[1] != 0:
-            pending_direction = new_direction
+input_system = InputHandler()
 
 # Game Start Logic
 food.pos = grid.food_spawn(snake.coordinates)
-keyboard.on_press(player_input)
+input_system.keyboard_listen()
 
 # Main Logic Updating Loop
 for step in range(time_limit):
     # Input Logic
-    direction = pending_direction
+    direction = input_system.commit_direction()
 
     # Dynamic Positioning and Food Logic
     new_head = grid.move_wrap(snake.head, direction)
