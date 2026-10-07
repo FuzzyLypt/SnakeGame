@@ -105,3 +105,12 @@ SnakeGame/
 - More game modes, such as multiplayer
 - AI-controlled snakes and an AI playground
 - Other map types, such as walls instead of wrap-around
+
+---
+
+## Contact
+**Larson A. Oliveira**
+
+[![Discord](https://img.shields.io/badge/Discord-%40fuzzylypt227-5865F2?logo=discord&logoColor=white)](https://discord.com)
+[![Email](https://img.shields.io/badge/Email-larson.oliveira123%40gmail.com-D14836?logo=gmail&logoColor=white)](mailto:larson.oliveira123@gmail.com)
+
