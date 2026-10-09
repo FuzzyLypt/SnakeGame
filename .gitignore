@@ -9,3 +9,6 @@ __pycache__/
 # IDE settings
 .idea/
 .vscode/
+
+# Game
+.high_score.txt
