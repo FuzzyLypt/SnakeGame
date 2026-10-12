@@ -67,9 +67,9 @@ The game settings are defined at the top of `main()` in `game/game_modes/snake_g
 | Variable            | Default    | Description                                   |
 | ------------------- | ---------- | --------------------------------------------- |
 | `initial_grid_size` | `(30, 10)` | Board size as `(width, height)`               |
-| `starting_length`   | `7`        | Number of segments the snake starts with      |
+| `starting_length`   | `3`        | Number of segments the snake starts with      |
 | `frame_time`        | `0.1`      | Seconds between frames (lower is faster)      |
-| `time_limit`        | `24000`    | Maximum number of steps before the game stops |
+| `time_limit`        | `48000`    | Maximum number of steps before the game stops |
 
 ## Project structure
 
