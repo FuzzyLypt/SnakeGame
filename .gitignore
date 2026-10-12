@@ -11,4 +11,4 @@ __pycache__/
 .vscode/
 
 # Game
-.high_score.txt
+game.high_score.txt

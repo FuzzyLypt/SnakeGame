@@ -9,11 +9,15 @@ from game.grid_maps.gridwrap_map import GridWrapMap
 from game.controllers.input_handler import InputHandler
 from game.objects.food_obj import FoodObj
 from game.objects.snake_obj import SnakeObj
+from game.utilities.game_utilities import GameUtils
 
 score = 0
 
+def exit_game():
+    sys.exit(0)
 
 def handle_exit(*args):
+    print("\nGame finalized.")
     global score
     with open('high_score.txt', 'w', encoding='utf-8') as file:
         file.write(str(score))
@@ -29,12 +33,13 @@ def load_highscore():
 
 def main():
     global score
+    GameUtils.exit_requested.clear()
 
     # Configuration Variables
     initial_grid_size = (30, 20)
     time_limit = 24000
     frame_time = 0.1
-    starting_length = 7
+    starting_length = 3
 
     # Logic Variables
     grid = GridWrapMap(initial_grid_size)
@@ -55,6 +60,9 @@ def main():
 
     # Main Logic Updating Loop
     for step in range(time_limit):
+        if GameUtils.exit_requested.is_set():
+            exit_game()
+
         # Input Logic
         direction = input_system.commit_direction()
 
