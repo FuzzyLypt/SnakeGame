@@ -37,7 +37,7 @@ def main():
 
     # Configuration Variables
     initial_grid_size = (30, 20)
-    time_limit = 24000
+    time_limit = 48000
     frame_time = 0.1
     starting_length = 3
 
