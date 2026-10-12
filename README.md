@@ -22,14 +22,15 @@ A simple text-based Snake game played with the **WASD** keys and rendered direct
 
 ### Controls
 
-| Key | Direction |
+| Key | Action    |
 | --- | --------- |
 | `W` | Up        |
 | `A` | Left      |
 | `S` | Down      |
 | `D` | Right     |
+| `K` | Exit game |
 
-The snake cannot reverse directly into itself, so pressing the opposite direction of the current movement is ignored. Press `Ctrl+C` in the terminal to quit.
+The snake cannot reverse directly into itself, so pressing the opposite direction of the current movement is ignored. Press `K` to quit. The game exits on the next loop iteration, prints `Game finalized.`, and saves the current score to `high_score.txt`.
 
 ## Requirements
 
@@ -87,9 +88,12 @@ SnakeGame/
     │   ├── __init__.py
     │   ├── food_obj.py          # food position
     │   └── snake_obj.py         # snake body and movement
-    └── controllers/
+    ├── controllers/
+    │   ├── __init__.py
+    │   └── input_handler.py     # keyboard input
+    └── utilities/
         ├── __init__.py
-        └── input_handler.py     # keyboard input
+        └── game_utilities.py    # shared exit request
 ```
 
 ## How it works
@@ -97,6 +101,7 @@ SnakeGame/
 - **`SnakeObj`** stores the body as a list of coordinates with the head at index 0. `move(new_head, grew)` inserts the new head and removes the tail unless the snake just ate.
 - **`GridWrapMap`** handles everything about the board itself: wrapping positions with modulo, choosing a random free cell for new food, and drawing the frame. It knows nothing about snakes beyond the coordinates it is given.
 - **`InputHandler`** listens for key presses through `keyboard.on_press`. The key callback runs on a separate thread, so a `threading.Lock` protects the direction state shared with the game loop, and the snake can never be turned back onto itself by a quick double key press.
+- **`GameUtils.exit_game()`** sets a shared `threading.Event` when `K` is pressed. The main loop checks this event and calls its own `exit_game()` function to exit from the main thread. The registered `handle_exit()` cleanup then saves the score and prints the exit message.
 - **`snake_game.py`** ties these together. The objects don't depend on each other, so new maps, controllers or game modes can be added without changing them.
 
 ## Ideas for the future
